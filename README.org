@@ -1,0 +1,57 @@
+#+TITLE:	mu4e-send-delay
+#+STARTUP:	content
+
+* Purpose
+
+Allowing to schedule mails to be sent at a later time. Thus enabling
+the ability to "undo send" mails.
+
+I'm aware of [[https://github.com/benmaughan/mu4e-delay][benmaughen's mu4e-delay]] but it was lack features which I
+wanted.
+Thanks to him for the inspiration and to Kai Großjohann for
+=gnus-delay.el= which I copied code from.
+
+Features:
+
+  - mu4e context support
+  - Saves scheduled mails to =mu4e-drafts-folder=
+  - Uses an emacs timer to check Drafts if a mail is scheduled to be sent now
+  - Allows easy edit of the X-Delay header in mu4e-compose-mode
+  - Displays scheduled time in *mu4e-view*
+  - Doesn't send if mail is currently being edited
+
+* Install
+
+1. Put =mu4e-send-delay.el= into a directory in you load-path and require it.
+#+begin_src emacs-lisp :tangle yes
+(add-to-lits 'load-path "path/to/directory") ; that contains mu4e-send-delay.el
+(require 'mu4e-send-delay)
+#+end_src
+
+2. Initialise the timer
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-main-mode-hook 'mu4e-send-delay-initialise-send-queue-timer)
+#+END_SRC
+
+** Requirements
+  - Has only been tested on Emacs 24.5 and later
+  - With [[https://github.com/djcb/mu-releases][mu 0.9.16]]
+
+* Recommended settings
+
+Assigning the scheduled enabled send to =C-c C-c=
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-main-mode-hook (lambda ()
+                                 (define-key mu4e-compose-mode-map
+                                   (kbd "C-c C-c")
+                                   'mu4e-send-delay-send-and-exit)))
+#+END_SRC
+
+Now you can =C-c C-c= every mail
+
+** Defaults
+
+- =mu4e-send-delay-default-delay= is set to "3m"
+- =mu4e-send-delay-timer= is set to every 2 minutes
+- =mu4e-send-delay-include-header-in-draft= is true
