@@ -6,8 +6,8 @@
 Allowing to schedule mails to be sent at a later time. Thus enabling
 the ability to "undo send" mails.
 
-I'm aware of [[https://github.com/benmaughan/mu4e-delay][benmaughen's mu4e-delay]] but it was lack features which I
-wanted.
+I'm aware of [[https://github.com/benmaughan/mu4e-delay][benmaughen's mu4e-delay]] but it was lacking features which
+I wanted.
 Thanks to him for the inspiration and to Kai Großjohann for
 =gnus-delay.el= which I copied code from.
 
