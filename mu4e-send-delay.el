@@ -191,6 +191,16 @@ message; if nil, only do so when sending the message"
    (when mu4e-send-delay-include-header-in-draft
      (mu4e~draft-header mu4e-send-delay-header mu4e-send-delay-default-delay))))
 
+;; Show up in the main view
+(add-to-list 'mu4e-header-info-custom
+             '(:send-delay . ( :name "Scheduled"
+                               :shortname "Delay"
+                               :help "Date/Time when mail is scheduled for dispatch"
+                               :function (lambda (msg)
+                                           (mu4e-send-delay-header-value
+                                            (mu4e-message-field msg :path))))))
+(add-to-list 'mu4e-view-fields :send-delay t)
+
 (defun mu4e-send-delay-header-value (file-path)
   (ignore-errors
     (with-temp-buffer
