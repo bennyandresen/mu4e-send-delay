@@ -210,9 +210,14 @@ message; if nil, only do so when sending the message"
   (let ((header-value (mu4e-send-delay-header-value file-path)))
     (if header-value (mu4e-send-delay-time-elapsed-p header-value))))
 
+(defun mu4e-send-delay-file-buffer-open (mail-file-path)
+  (get-file-buffer mail-file-path))
+
 (defun mu4e-send-delay-send-if-due (mail-file-path)
-  "Send mail if MAIL-FILE-PATH is earlier than current time."
-  (when (mu4e-send-delay-elapsed-p mail-file-path)
+  "Send mail if MAIL-FILE-PATH is earlier than current time and
+is not currently being edited."
+  (when (and (mu4e-send-delay-elapsed-p mail-file-path)
+             (not (mu4e-send-delay-file-buffer-open mail-file-path)))
     (condition-case err
         (with-temp-buffer
           (insert-file-contents-literally mail-file-path)
