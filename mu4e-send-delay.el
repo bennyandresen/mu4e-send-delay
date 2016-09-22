@@ -244,8 +244,8 @@ than current time and is not currently being edited."
             ;; set modified to nil so buffer can be killed
             (set-buffer-modified-p nil))
           (delete-file mail-file-path)
-          t))
-    (error "mu4e-send: %s")))
+          t)
+      (error "mu4e-send: %s" err))))
 
 (defmacro mu4e-send-delay-with-mu4e-context (context &rest body)
   "Evaluate BODY, with `mu4e~current-context' set and

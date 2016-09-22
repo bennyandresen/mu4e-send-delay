@@ -61,3 +61,4 @@ Now you can =C-c C-c= every mail
 - =mu4e-send-delay-default-delay= is set to "3m"
 - =mu4e-send-delay-timer= is set to every 2 minutes
 - =mu4e-send-delay-include-header-in-draft= is true
+- =mu4e-send-strip-header-before-send= is true
