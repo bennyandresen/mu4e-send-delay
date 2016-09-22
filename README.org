@@ -19,6 +19,7 @@ Features:
   - Allows easy edit of the X-Delay header in mu4e-compose-mode
   - Displays scheduled time in *mu4e-view*
   - Doesn't send if mail is currently being edited
+  - Works with attachments
 
 * Install
 
@@ -30,10 +31,10 @@ Features:
 
 2. Setup mu4e-send-delay-setup
 #+BEGIN_SRC emacs-lisp
-(mu4e-send-delay-setup)
+(mu4e-send-delay-setup) ; sets up headers to show up by default
 #+END_SRC
 
-3. Initialize the timer
+3. Initialize the timer that works through the Drafts to send delayed mails
 #+BEGIN_SRC emacs-lisp
 (add-hook 'mu4e-main-mode-hook 'mu4e-send-delay-initialize-send-queue-timer)
 #+END_SRC

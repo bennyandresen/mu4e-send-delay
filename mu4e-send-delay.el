@@ -25,12 +25,12 @@
 
 ;; Heavily inspired by gnus-delay and mu4e-delay, but made to fit into the mu4e
 ;; environment better.
-;; Thanks to Ben Maughen and Kai Großjohann
+;; Thanks to Ben Maughen and Kai Großjohann.
 
 ;;; Code:
 
 (eval-when-compile (byte-compile-disable-warning 'cl-functions))
-(require 'cl)
+(require 'cl-lib)
 
 (require 'gnus-util)
 (autoload 'parse-time-string "parse-time" nil nil)
@@ -227,22 +227,25 @@ message; if nil, only do so when sending the message"
       (mu4e-send-delay-draft-delete-header)
       (mu4e-send-delay-draft-add-header))))
 
-
 (defun mu4e-send-delay-send-if-due (mail-file-path)
-  "Send mail if MAIL-FILE-PATH is earlier than current time and
-is not currently being edited."
+  "Send mail when MAIL-FILE-PATH contains scheduled time earlier
+than current time and is not currently being edited."
   (when (and (mu4e-send-delay-elapsed-p mail-file-path)
              (not (mu4e-send-delay-file-buffer-open mail-file-path)))
     (condition-case err
-        (with-temp-buffer
-          (insert-file-contents-literally mail-file-path)
-          (mu4e~draft-insert-mail-header-separator)
-          (when mu4e-send-strip-header-before-send
-            (message-remove-header mu4e-send-delay-header nil t))
-          (funcall message-send-mail-function)
+        (progn
+          (with-temp-buffer
+            (insert-file-contents-literally mail-file-path)
+            (mu4e~draft-insert-mail-header-separator)
+            (mu4e-compose-mode)
+            (when mu4e-send-strip-header-before-send
+              (message-remove-header mu4e-send-delay-header nil t))
+            (message-send-mail)
+            ;; set modified to nil so buffer can be killed
+            (set-buffer-modified-p nil))
           (delete-file mail-file-path)
-          t)
-      (error "mu4e-send: %s" err))))
+          t))
+    (error "mu4e-send: %s")))
 
 (defmacro mu4e-send-delay-with-mu4e-context (context &rest body)
   "Evaluate BODY, with `mu4e~current-context' set and
@@ -284,6 +287,10 @@ is not currently being edited."
           (run-with-timer 0 mu4e-send-delay-default-timer 'mu4e-send-delay-send-queue))))
 
 (defun mu4e-send-delay-setup ()
+  "Sets up `mu4e-compose-mode-hook' and defines modified `mu4e~draft-common-construct' for Drafts
+`mu4e-compose-mode-hook' is used to refresh the schedule header upon edit and
+`mu4e~draft-common-construct' is used to include the initial mu4e-send-delay header value."
+  (interactive)
   (add-hook 'mu4e-compose-mode-hook #'mu4e-send-delay-draft-refresh-header)
 
   ;; Find a better way to do this
