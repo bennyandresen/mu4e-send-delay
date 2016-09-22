@@ -9,7 +9,7 @@ the ability to "undo send" mails.
 I'm aware of [[https://github.com/benmaughan/mu4e-delay][benmaughen's mu4e-delay]] but it was lacking features which
 I wanted.
 Thanks to him for the inspiration and to Kai Großjohann for
-=gnus-delay.el= which I copied code from.
+=gnus-delay.el= which I copied code from. (=mu4e-send-delay-add-delay-header=)
 
 Features:
 
@@ -28,9 +28,14 @@ Features:
 (require 'mu4e-send-delay)
 #+end_src
 
-2. Initialise the timer
+2. Setup mu4e-send-delay-setup
 #+BEGIN_SRC emacs-lisp
-(add-hook 'mu4e-main-mode-hook 'mu4e-send-delay-initialise-send-queue-timer)
+(mu4e-send-delay-setup)
+#+END_SRC
+
+3. Initialize the timer
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-main-mode-hook 'mu4e-send-delay-initialize-send-queue-timer)
 #+END_SRC
 
 ** Requirements
