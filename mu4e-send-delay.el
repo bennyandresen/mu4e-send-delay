@@ -236,12 +236,17 @@ than current time and is not currently being edited."
         (progn
           (with-temp-buffer
             (insert-file-contents-literally mail-file-path)
+
+            ;; force recode to fix character encoding issue
             (set-buffer-file-coding-system 'utf-8 t)
+            (recode-region (point-min) (point-max) 'prefer-utf-8 'utf-8-unix)
+
             (mu4e~draft-insert-mail-header-separator)
             (mu4e-compose-mode)
             (when mu4e-send-strip-header-before-send
               (message-remove-header mu4e-send-delay-header nil t))
             (message-send-mail)
+
             ;; set modified to nil so buffer can be killed
             (set-buffer-modified-p nil))
           (delete-file mail-file-path)
