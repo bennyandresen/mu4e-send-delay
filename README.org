@@ -40,8 +40,16 @@ Features:
 #+END_SRC
 
 ** Requirements
-  - Has only been tested on Emacs 24.5 and later
-  - With [[https://github.com/djcb/mu-releases][mu 0.9.16]]
+- Has only been tested on Emacs 24.5 and later
+- With [[https://github.com/djcb/mu-releases][mu 0.9.16]]
+
+* Particularies
+
+Right now the sent buffer will be force-encoded to utf-8, to avoid mml.el complaining upon a scheduled sent.
+If you notice your mails arriving garbled despite looking okay in the Drafts, please consider the following emacs options:
+#+begin_src emacs-lisp :tangle yes
+(prefer-coding-system 'utf-8)
+#+end_src
 
 * Recommended settings
 

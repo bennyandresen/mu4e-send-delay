@@ -236,6 +236,7 @@ than current time and is not currently being edited."
         (progn
           (with-temp-buffer
             (insert-file-contents-literally mail-file-path)
+            (set-buffer-file-coding-system 'utf-8 t)
             (mu4e~draft-insert-mail-header-separator)
             (mu4e-compose-mode)
             (when mu4e-send-strip-header-before-send
