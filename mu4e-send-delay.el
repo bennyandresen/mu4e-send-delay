@@ -156,7 +156,9 @@ message; if nil, only do so when sending the message"
   "Delayed send this mail, unless INSTANT (prefix-argument) is non-nil. "
   (interactive "P")
   (if instant
-      (message-send-and-exit)
+      (progn
+        (message-remove-header mu4e-send-delay-header nil t)
+        (message-send-and-exit))
     (mu4e-send-delay-postpone-and-exit)))
 
 (defun mu4e-send-delay-postpone-and-exit ()
