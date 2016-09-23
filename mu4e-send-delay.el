@@ -120,10 +120,10 @@ message; if nil, only do so when sending the message"
            (aset deadline 1 minute)
            (aset deadline 2 hour)
            ;; Convert to seconds.
-           (setq deadline (gnus-float-time (apply 'encode-time
-                                                  (append deadline nil))))
+           (setq deadline (float-time (apply 'encode-time
+                                             (append deadline nil))))
            ;; If this time has passed already, add a day.
-           (when (< deadline (gnus-float-time))
+           (when (< deadline (float-time))
              (setq deadline (+ 86400 deadline))) ; 86400 secs/day
            ;; Convert seconds to date header.
            (setq deadline (message-make-date
@@ -146,7 +146,7 @@ message; if nil, only do so when sending the message"
                  (t
                   (setq delay (* num 60))))
            (setq deadline (message-make-date
-                           (seconds-to-time (+ (gnus-float-time) delay)))))
+                           (seconds-to-time (+ (float-time) delay)))))
           (t (error "Malformed delay `%s'" delay)))
     (message-add-header (format "%s: %s" mu4e-send-delay-header deadline))
     deadline))
@@ -284,7 +284,7 @@ than current time and is not currently being edited."
   (interactive)
   (unless mu4e-send-delay-send-queue-timer
     (setq mu4e-send-delay-send-queue-timer
-          (run-with-timer 0 mu4e-send-delay-default-timer 'mu4e-send-delay-send-queue))))
+          (run-with-timer 0 mu4e-send-delay-timer 'mu4e-send-delay-send-queue))))
 
 (defun mu4e-send-delay-setup ()
   "Sets up `mu4e-compose-mode-hook' and defines modified `mu4e~draft-common-construct' for Drafts
