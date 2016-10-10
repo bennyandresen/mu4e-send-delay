@@ -202,11 +202,13 @@ message; if nil, only do so when sending the message"
       (buffer-substring (point) (point-at-eol)))))
 
 (defun mu4e-send-delay-time-elapsed-p (time-string)
-  (let* ((delay-time (apply 'encode-time
-                            (parse-time-string time-string)))
-         (time-since (time-since delay-time)))
-    (and (>= (nth 0 time-since) 0)
-         (>= (nth 1 time-since) 0))))
+  ;; if it's not a valid time-string, don't encode it
+  (let ((parsed-ts (parse-time-string time-string)))
+    (when (not (cl-every #'null parsed-ts))
+      (let* ((delay-time (apply 'encode-time parsed-ts))
+             (time-since (time-since delay-time)))
+        (and (>= (nth 0 time-since) 0)
+             (>= (nth 1 time-since) 0))))))
 
 (defun mu4e-send-delay-elapsed-p (file-path)
   (let ((header-value (mu4e-send-delay-header-value file-path)))
