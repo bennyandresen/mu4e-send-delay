@@ -25,7 +25,7 @@ Features:
 
 1. Put =mu4e-send-delay.el= into a directory in you load-path and require it.
 #+begin_src emacs-lisp :tangle yes
-(add-to-lits 'load-path "path/to/directory") ; that contains mu4e-send-delay.el
+(add-to-list 'load-path "path/to/directory") ; that contains mu4e-send-delay.el
 (require 'mu4e-send-delay)
 #+end_src
 
