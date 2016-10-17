@@ -1,4 +1,3 @@
-;; -*-mode: emacs-lisp; fill-column: 80 -*-
 ;; mu4e-send-delay.el -- not part of mu4e
 
 ;; Copyright (C) 2016 Benjamin Andresen <benny@in-ulm.de>
@@ -54,7 +53,7 @@
   :type 'string
   :group 'mu4e-delay)
 
-(defcustom mu4e-send-strip-header-before-send t
+(defcustom mu4e-send-delay-strip-header-before-send t
   "Remove `mu4e-send-delay-header' before sending mail."
   :type 'bool
   :group 'mu4e-delay)
@@ -247,15 +246,41 @@ than current time and is not currently being edited."
 
             (mu4e~draft-insert-mail-header-separator)
             (mu4e-compose-mode)
-            (when mu4e-send-strip-header-before-send
+            (when mu4e-send-delay-strip-header-before-send
               (message-remove-header mu4e-send-delay-header nil t))
-            (message-send-mail)
-
             ;; set modified to nil so buffer can be killed
+            (message-send-mail)
             (set-buffer-modified-p nil))
-          (delete-file mail-file-path)
+          (mu4e-send-delay-move-to-sent-and-delete-draft mail-file-path)
           t)
       (error "mu4e-send: %s" err))))
+
+(defun mu4e-send-delay-move-to-sent-and-delete-draft (mail-file-path)
+  (let (buf file)
+    (when mail-file-path
+      (setq buf (find-file-noselect mail-file-path))
+      (set-buffer (get-buffer-create " *mu4e-send-delay temp*"))
+      (erase-buffer)
+      (insert-buffer-substring buf)
+      (message-narrow-to-head)
+      ;; can't use message-add-header as it lacks the mail header
+      ;; separator
+      (insert (format "Date: %s\n" (message-make-date)))
+
+      ;; XXX: I'm not happy with the duplication of logic
+      (setq file (message-fetch-field "fcc"))
+      (message-remove-header "fcc" nil)
+      (message-remove-header mu4e-send-delay-header nil)
+
+      ;; write mail to Sent-folder
+      (write-file file)
+      (kill-buffer (current-buffer))
+
+      ;; delete mail from Drafts-folder
+      (delete-file mail-file-path)
+      (with-current-buffer buf
+        (set-buffer-modified-p nil)
+        (kill-buffer buf)))))
 
 (defmacro mu4e-send-delay-with-mu4e-context (context &rest body)
   "Evaluate BODY, with `mu4e~current-context' set and
@@ -294,7 +319,7 @@ than current time and is not currently being edited."
   (interactive)
   (unless mu4e-send-delay-send-queue-timer
     (setq mu4e-send-delay-send-queue-timer
-          (run-with-timer 0 mu4e-send-delay-timer 'mu4e-send-delay-send-queue))))
+          (run-with-timer 0 mu4e-send-delay-timer #'mu4e-send-delay-send-queue))))
 
 (defun mu4e-send-delay-setup ()
   "Sets up `mu4e-compose-mode-hook' and defines modified `mu4e~draft-common-construct' for Drafts
