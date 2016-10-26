@@ -273,7 +273,10 @@ than current time and is not currently being edited."
       (message-remove-header mu4e-send-delay-header nil)
 
       ;; write mail to Sent-folder
-      (write-file file)
+      (when file
+        (write-file file))
+
+      (set-buffer-modified-p nil)
       (kill-buffer (current-buffer))
 
       ;; delete mail from Drafts-folder
