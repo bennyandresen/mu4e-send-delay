@@ -172,6 +172,10 @@ message; if nil, only do so when sending the message"
       (progn
         (if (not (equal major-mode 'mu4e-compose-mode))
             (error "Not a mu4e:compose buffer."))
+
+        ;; set reply/forward flag
+        (when (buffer-file-name) (mu4e~compose-set-parent-flag (buffer-file-name)))
+
         (let (schedule-time current-header-value)
           (setq delay-header-value (message-fetch-field mu4e-send-delay-header))
           (if delay-header-value (message-remove-header mu4e-send-delay-header))
