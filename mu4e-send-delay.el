@@ -1,6 +1,6 @@
-;; mu4e-send-delay.el -- not part of mu4e
+;; mu4e-send-delay.el --- delay sending of mails in mu4e
 
-;; Copyright (C) 2016 Benjamin Andresen <benny@in-ulm.de>
+;; Copyright (C) 2016-2017 Benjamin Andresen <benny@in-ulm.de>
 
 ;; Author: Benjamin Andresen <benny@in-ulm.de>
 ;; Maintainer: Benjamin Andresen <benny@in-ulm.de>
