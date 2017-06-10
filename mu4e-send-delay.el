@@ -1,9 +1,11 @@
-;; mu4e-send-delay.el --- delay sending of mails in mu4e
+;;; mu4e-send-delay.el --- delay sending of mails in mu4e
 
 ;; Copyright (C) 2016-2017 Benjamin Andresen <benny@in-ulm.de>
 
 ;; Author: Benjamin Andresen <benny@in-ulm.de>
 ;; Maintainer: Benjamin Andresen <benny@in-ulm.de>
+;; Version: 20170610.0636
+;; URL: https://github.com/jleechpe/outorg-export
 
 ;; This file is not part of GNU Emacs.
 ;;
@@ -346,3 +348,5 @@ than current time and is not currently being edited."
        (mu4e~draft-header mu4e-send-delay-header mu4e-send-delay-default-delay)))))
 
 (provide 'mu4e-send-delay)
+
+;;; mu4e-send-delay.el ends here
