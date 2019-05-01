@@ -278,9 +278,10 @@ than current time and is not currently being edited."
       (message-remove-header "fcc" nil)
       (message-remove-header mu4e-send-delay-header nil)
 
-      ;; write mail to Sent-folder
-      (when file
-        (write-file file))
+      ;; write mail to Sent-folder if set in mu4e
+      (when (equal 'mu4e-sent-messages-behavior 'sent)
+	(when file
+          (write-file file)))
 
       (set-buffer-modified-p nil)
       (kill-buffer (current-buffer))
