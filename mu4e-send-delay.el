@@ -279,7 +279,7 @@ than current time and is not currently being edited."
       (message-remove-header mu4e-send-delay-header nil)
 
       ;; write mail to Sent-folder if set in mu4e
-      (when (equal 'mu4e-sent-messages-behavior 'sent)
+      (when (member mu4e-sent-messages-behavior '(sent))
 	(when file
           (write-file file)))
 
