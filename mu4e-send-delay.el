@@ -50,6 +50,11 @@
   :type 'string
   :group 'mu4e-delay)
 
+(defcustom mu4e-internet-host-test "www.gnu.org"
+  "Host to test internet connection before sending mail."
+  :type 'string
+  :group 'mu4e-delay)
+
 (defcustom mu4e-send-delay-header "X-Delay"
   "Header name for storing info about delayed mails."
   :type 'string
@@ -236,11 +241,20 @@ message; if nil, only do so when sending the message"
       (mu4e-send-delay-draft-delete-header)
       (mu4e-send-delay-draft-add-header))))
 
+(defun mu4e-internet-up-p (&optional host)
+  "Test if internet connection is up (default host is defined by custom variable
+mu4e-internet-host-test."
+  (= 0 (call-process "ping" nil nil nil "-c" "1" "-W" "1" 
+		     (if host host mu4e-internet-host-test))))
+
+
 (defun mu4e-send-delay-send-if-due (mail-file-path)
   "Send mail when MAIL-FILE-PATH contains scheduled time earlier
 than current time and is not currently being edited."
   (when (and (mu4e-send-delay-elapsed-p mail-file-path)
              (not (mu4e-send-delay-file-buffer-open mail-file-path)))
+    (if (not (mu4e-internet-up-p))
+	(message "mu4e: unable to send queued message for lack of internet connection")
     (condition-case err
         (progn
           (with-temp-buffer
@@ -259,7 +273,7 @@ than current time and is not currently being edited."
             (set-buffer-modified-p nil))
           (mu4e-send-delay-move-to-sent-and-delete-draft mail-file-path)
           t)
-      (error "mu4e-send: %s" err))))
+      (error "mu4e-send: %s" err)))))
 
 (defun mu4e-send-delay-move-to-sent-and-delete-draft (mail-file-path)
   (let (buf file)
@@ -278,9 +292,10 @@ than current time and is not currently being edited."
       (message-remove-header "fcc" nil)
       (message-remove-header mu4e-send-delay-header nil)
 
-      ;; write mail to Sent-folder
-      (when file
-        (write-file file))
+      ;; write mail to Sent-folder if set in mu4e
+      (when (eq mu4e-sent-messages-behavior 'sent)
+	(when file
+          (write-file file)))
 
       (set-buffer-modified-p nil)
       (kill-buffer (current-buffer))
