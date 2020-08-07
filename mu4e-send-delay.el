@@ -301,7 +301,7 @@ than current time and is not currently being edited."
 
 (defun mu4e-send-delay-get-drafts-folder ()
   (expand-file-name
-   (concat mu4e-maildir (mu4e-get-drafts-folder) "/cur")))
+   (concat (mu4e-root-maildir) (mu4e-get-drafts-folder) "/cur")))
 
 (defun mu4e-send-delay-send-queue ()
   "Send all delayed mails that are due now."
@@ -342,8 +342,7 @@ than current time and is not currently being edited."
     "Construct the common headers for each message."
     (concat
      (mu4e~draft-header "User-agent" mu4e-user-agent-string)
-     (when mu4e-compose-auto-include-date
-       (mu4e~draft-header "Date" (message-make-date)))
+     (mu4e~draft-header "Date" (message-make-date))
      (when mu4e-send-delay-include-header-in-draft
        (mu4e~draft-header mu4e-send-delay-header mu4e-send-delay-default-delay)))))
 
